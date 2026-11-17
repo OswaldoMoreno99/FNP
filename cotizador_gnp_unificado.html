@@ -150,6 +150,7 @@ button,input,select{font:inherit;color:inherit}
 .total .v span{display:block;font-size:13px;color:var(--muted);margin-top:4px;font-weight:600}
 .pie-now{margin:0 22px;background:var(--blue-wash);border-radius:var(--r-md);padding:11px 14px;display:flex;justify-content:space-between;align-items:center;gap:10px}
 .pie-now span{font-size:13.5px;color:var(--blue-deep);font-weight:700}
+.pie-now strong small{display:block;font-size:12px;font-weight:700;color:var(--muted);text-align:right}
 .pie-now strong{font-size:17px;color:var(--blue-deep);font-weight:900;font-variant-numeric:tabular-nums}
 .lg-notes{padding:12px 22px 0;display:flex;flex-direction:column;gap:8px}
 .actions{padding:8px 22px 22px;display:grid;grid-template-columns:1fr 1fr;gap:8px}
@@ -250,7 +251,7 @@ dialog::backdrop{background:rgba(16,36,52,.45)}
       <div class="brand-sep" aria-hidden="true"></div>
       <div class="brand-t">
         <h1>Cotizador NF</h1>
-        <p>Funeraria Nuestros Parques · v3.18 borrador</p>
+        <p>Funeraria Nuestros Parques · v3.19 borrador</p>
       </div>
     </div>
     <div class="top-tools">
@@ -576,8 +577,9 @@ function edadDe(iso){
 function descUF(st,vPlan,vUf){var d=pn(st.dValor);
   if(st.dTipo==='uf')return d;if(st.dTipo==='pesos')return vUf>0?d/vUf:0;if(st.dTipo==='porcentaje')return vPlan*(d/100);return 0;}
 function pieUF(st,vPlan,vUf){var v=pn(st.pieValor);
-  if(st.pieTipo==='porcentaje')return{v:vPlan*(v/100),hint:'Actualmente: '+uf2(v)+'% sobre precio total.'};
-  if(st.pieTipo==='uf')return{v:v,hint:'Pie ingresado directamente en UF.'};
+  var ref=function(u){return vUf>0&&u>0?' ≈ '+pesos(u*vUf)+' referencial.':'';};
+  if(st.pieTipo==='porcentaje'){var pu1=vPlan*(v/100);return{v:pu1,hint:'Actualmente: '+uf2(v)+'% sobre precio total = '+uf2(pu1)+' UF.'+ref(pu1)};}
+  if(st.pieTipo==='uf')return{v:v,hint:'Pie ingresado directamente en UF.'+ref(v)};
   if(st.pieTipo==='pesos'){var pu=vUf>0?v/vUf:0;return{v:pu,hint:'Conversión: '+pesos(v)+' ÷ '+pesos(vUf)+' = '+uf4(pu)+' UF.'};}
   return{v:0,hint:''};}
 
@@ -659,7 +661,7 @@ function computeStd(k,st,g){
        total:mp?pesos(tot):uf4(tot),
        top:headFp?pesos(vPlan*vUf):uf2(vPlan), topPesos:headFp,
        topAlt:headFp?uf2(vPlan)+' UF':(vUf>0?pesos(vPlan*vUf):'')},
-    totNum:tot,pieHint:pieHint,pieAlert:pieAlert,pieErr:pieErr,seguroAlert:seguroAlert(contado,ed,aS,cuotas),conInteres:!!tasa,tasa:tasa,exento:!!o.exento,
+    totNum:tot,pieNum:pieT,pieHint:pieHint,pieAlert:pieAlert,pieErr:pieErr,seguroAlert:seguroAlert(contado,ed,aS,cuotas),conInteres:!!tasa,tasa:tasa,exento:!!o.exento,
     seguroAplica:seguroAplica,dps:seguroAplica&&ed!==null&&ed>=65&&ed<75,gastoAplica:gastoAplica,notes:notes};
 }
 
@@ -694,7 +696,7 @@ function computeSEP(st,g){
        montoFin:uf4(mf),nCuotas:String(cuotas),interes:(contado||cuotas<=12)?'-':'0,56%',cuotaBase:uf4(cb),ivaCuota:uf4c(ivaC),
        gasto:gastoAplica?uf2(GASTO_UF_SEP):'-',seguro:seguroAplica?uf2(SEGURO_UF_SEP):'-',total:uf4(tot),
        top:uf2(vPlan),topPesos:false,topAlt:vUf>0?pesos(vPlan*vUf):''},
-    totNum:tot,pieHint:pieHint,pieAlert:pieAlert,pieErr:pieErr,seguroAlert:seguroAlert(contado,ed,aS,cuotas),
+    totNum:tot,pieNum:pieT,pieHint:pieHint,pieAlert:pieAlert,pieErr:pieErr,seguroAlert:seguroAlert(contado,ed,aS,cuotas),
     seguroAplica:seguroAplica,dps:seguroAplica&&ed!==null&&ed>=65&&ed<75,gastoAplica:gastoAplica,notes:notes};
 }
 
@@ -877,7 +879,7 @@ function recalc(){
       h+='</div>';
       var alt=R.mp?(R.vUf>0?'≈ '+uf4(R.totNum/R.vUf)+' UF':''):(R.vUf>0?'≈ '+pesos(R.totNum*R.vUf):'');
       h+='<div class="total"><div class="k">Total cuota mensual</div><div class="v"><strong>'+esc(R.d.total)+(R.mp?'':' UF')+'</strong><span>'+esc(alt)+' referencial</span></div></div>';
-      h+='<div class="pie-now"><span>Pie a pagar hoy'+(R.exento?'':' (con IVA)')+'</span><strong>'+esc(R.d.pieTotal==='-'?'—':(R.d.pieTotal+(R.mp?'':' UF')))+'</strong></div>';
+      h+='<div class="pie-now"><span>Pie a pagar hoy'+(R.exento?'':' (con IVA)')+'</span><strong>'+esc(R.d.pieTotal==='-'?'—':(R.d.pieTotal+(R.mp?'':' UF')))+(!R.mp&&R.vUf>0&&R.pieNum>0?'<small>≈ '+esc(pesos(R.pieNum*R.vUf))+' referencial</small>':'')+'</strong></div>';
     }
     var ns=[];
     if(R.pieAlert&&R.pieAlert.t!=='ok')ns.push(note(R.pieAlert.t,R.pieAlert.m));
