@@ -251,7 +251,7 @@ dialog::backdrop{background:rgba(16,36,52,.45)}
       <div class="brand-sep" aria-hidden="true"></div>
       <div class="brand-t">
         <h1>Cotizador NF</h1>
-        <p>Funeraria Nuestros Parques · v3.19 borrador</p>
+        <p>Funeraria Nuestros Parques · v3.20 borrador</p>
       </div>
     </div>
     <div class="top-tools">
@@ -919,7 +919,7 @@ function quoteText(k,r){var a=lsGet('gnp_asesor')||{},L=[];
   var tot=r.d.top+(r.d.topPesos?'':' UF')+(!r.d.topPesos&&r.vUf>0?' (≈ '+pesos(r.vPlan*r.vUf)+')':'');
   L.push('Valor total: '+tot);
   if(r.contado)L.push('Forma de pago: contado');
-  else{L.push('Pie: '+(r.d.pieTotal==='-'?'sin pie':r.d.pieTotal+(r.mp?'':' UF')));
+  else{L.push('Pie: '+(r.d.pieTotal==='-'?'sin pie':r.d.pieTotal+(r.mp?'':' UF'+(r.vUf>0&&r.pieNum>0?' (≈ '+pesos(r.pieNum*r.vUf)+')':''))));
     L.push(r.cuotas+(r.cuotas===1?' cuota de ':' cuotas mensuales de ')+r.d.total+(r.mp?'':' UF'+(r.vUf>0?' (≈ '+pesos(r.totNum*r.vUf)+')':'')));}
   if(k==='s')L.push('Arancel de activación: '+uf2(r.actIVA)+' UF, se paga al activar el servicio.');
   L.push('');L.push('Valores referenciales según la UF del día ('+pesos(r.vUf)+').');
