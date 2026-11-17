@@ -250,7 +250,7 @@ dialog::backdrop{background:rgba(16,36,52,.45)}
       <div class="brand-sep" aria-hidden="true"></div>
       <div class="brand-t">
         <h1>Cotizador NF</h1>
-        <p>Funeraria Nuestros Parques · v3.16 borrador</p>
+        <p>Funeraria Nuestros Parques · v3.18 borrador</p>
       </div>
     </div>
     <div class="top-tools">
@@ -328,7 +328,7 @@ dialog::backdrop{background:rgba(16,36,52,.45)}
         <div class="f"><label for="tParque">Parque</label>
           <select id="tParque"><option value="">Selecciona…</option><option>Parque El Prado</option><option>Parque Manantial</option><option>Parque Canaán</option><option>Parque Santiago</option><option>Parque La Foresta</option></select></div>
         <div class="f"><label for="tTipo">Tipo de sepultura</label>
-          <select id="tTipo"><option value="">Selecciona…</option><option>Tradicional</option><option>Íntegra</option><option>Íntegra Premium</option><option>SB Sin Beneficios</option><option>Premium Los Olivos</option><option>Mausoleo Premium</option></select><div class="hint" id="tTipoHint"></div></div>
+          <select id="tTipo"><option value="">Selecciona…</option><option>Tradicional</option><option>Íntegra</option><option>Íntegra Premium</option><option>SB Sin Beneficios</option></select><div class="hint" id="tTipoHint"></div></div>
         <div class="f span2" id="tAreaWrap" hidden><label for="tArea">Área</label><select id="tArea"></select><div class="hint" id="tAreaHint">El precio de Tradicional depende del parque, el área y la capacidad.</div></div>
         <div class="f"><span class="lbl" id="lTCap">Capacidad</span><div class="seg" role="group" aria-labelledby="lTCap" data-seg="cap"></div></div>
         <div class="f" id="tRedWrap"><label for="tRed">Reducciones</label><input id="tRed" inputmode="numeric" autocomplete="off"><div class="hint">Se completa según el catálogo. Puedes cambiarlo.</div></div>
@@ -509,11 +509,7 @@ var SEP_T={
   'Íntegra':{caps:['2','3','4'],red:RED3,pie:0.10,pieIdeal:0.15,parques:NO_PRADO,
     precios:smc({2:107,3:112,4:117},{2:112,3:117,4:122}),incl:['Primera sepultación gratis','Primera mantención gratis','Servicio de condolencias estándar']},
   'Íntegra Premium':{caps:['2','3','4'],red:RED3,pie:0.10,parques:NO_PRADO,
-    precios:smc({2:110,3:120,4:130},{2:115,3:125,4:135}),incl:['Derecho de sepultación por cada capacidad','Primera mantención gratis']},
-  'Premium Los Olivos':{caps:['4'],red:{4:12},pie:0.05,parques:['Parque Santiago'],area:'Sector Los Olivos · Premium Side',
-    precios:{'Parque Santiago':{4:270}},incl:['Plan de cesantía','Servicio de condolencias estándar','Plan de aporte funerario']},
-  'Mausoleo Premium':{caps:['1','2','3','4'],red:{1:0,2:4,3:8,4:12},pie:0.05,parques:['Parque Santiago'],area:'Sector Los Olivos',
-    precios:{'Parque Santiago':{1:100,2:180,3:240,4:280}},incl:['Plan de cesantía','Servicio de condolencias estándar','Plan de aporte funerario']}
+    precios:smc({2:110,3:120,4:130},{2:115,3:125,4:135}),incl:['Derecho de sepultación por cada capacidad','Primera mantención gratis']}
 };
 var FACT_SEPU={uf:{18:0.05857,24:0.04466,36:0.03076,48:0.02383,60:0.01968,72:0.01693,84:0.01497,96:0.01351,108:0.01238},
                p:{18:0.06496,24:0.05087,36:0.03690,48:0.03002,60:0.02599,72:0.02337,84:0.02156,96:0.02025,108:0.01928}};
@@ -947,6 +943,12 @@ function docs(k,r){var base=[['Cédula de identidad del titular'],['Comprobante 
   else if(k==='c')x=[['Contrato de Cremación NF'],['Anexo 1 – Detalle del Producto Cineración'],['Anexo 2 – Documento Requerido Cineración']].concat(r.seguroAplica?[['Seguro de Desgravamen',1]]:[]);
   else if(k==='p')x=[['Contrato Anexo Liberador Derecho de Sepultación'],['Anexo 2 – Servicio SAC']].concat(r.seguroAplica?[['Seguro de Desgravamen',1]]:[]);
   else if(k==='l')x=[['Contrato Anexo Liberador de Mantención'],['Anexo 2 – Servicio SAC']].concat(r.seguroAplica?[['Seguro de Desgravamen',1]]:[]);
+  else if(k==='t'){var tp=($('tTipo')||{}).value||'';
+    var gen=[['Estipulaciones Generales'],['Estipulaciones Específicas']];
+    if(tp==='Íntegra'||tp==='Íntegra Premium'||tp==='SB Sin Beneficios')x=gen.concat([['Anexo 2 – Servicio SAC'],['Formulario “Modificación de Contrato”'+(tp!=='Íntegra Premium'?' (sin beneficios complementarios)':'')]]);
+    else x=gen.concat([['Anexo 1 – Beneficios Complementarios'],['Anexo 2 – Servicio SAC']]);
+    if(r.seguroAplica)x.push(['Seguro de Desgravamen',1]);}
+  else if(k==='u')x=[['Estipulaciones Generales Columbarios'],['Estipulaciones Específicas Columbarios'],['Anexo 1 – Servicio SAC']].concat(r.seguroAplica?[['Seguro de Desgravamen',1]]:[]);
   else x=(r.seguroAplica?[['Seguro de Desgravamen',1]]:[]);
   if(r.dps)x.push(['DPS – Declaración Personal de Salud (65 a 74,9 años)',1]);
   return base.concat(x);}
